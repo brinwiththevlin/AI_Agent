@@ -1,0 +1,132 @@
+# ==============================================================================
+# Generic Python Project Template - pyproject.toml
+# ==============================================================================
+#
+# Instructions:
+# 1. Fill in the placeholders in the [project] section.
+# 2. Add your project's core dependencies to the `dependencies` list.
+# 3. Update the `include` path in [tool.pyright] to match your package name.
+#
+# ==============================================================================
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# --- Project Metadata (Fill this out for each new project) ---
+[project]
+name = "ai_agent"
+version = "0.1.0"
+description = "A brief description of your project."
+authors = [
+    { name = "Bryan Cora", email = "bcora2018@gmail.com" }
+]
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" } # Assumes you will add a LICENSE file (e.g., MIT)
+dependencies = [
+    # Add your project's core runtime dependencies here
+    # e.g., "requests", "numpy"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+homepage = "https://github.com/brinwiththevlin/ai_agent"
+repository = "https://github.com/brinwiththevlin/ai_agent"
+
+# --- Development and Tooling Dependencies ---
+[project.optional-dependencies]
+lint = [
+    "ruff",
+    "pyright",
+]
+test = [
+    "pytest",
+    "coverage",
+]
+doc = [
+    "sphinx",
+]
+build = [
+    "build[virtualenv]==1.0.3",
+]
+# The 'dev' group installs everything needed for development
+dev = [
+    "tox",
+    "pre-commit",
+    "interrogate",
+    "ai_agent[lint]",
+    "ai_agent[test]",
+    "ai_agent[doc]",
+    "ai_agent[build]",
+]
+
+# --- Tool Configurations ---
+
+[tool.pyright]
+# Update this to match your package name inside the 'src' directory
+include = ["src/ai_agent"]
+exclude = [".venv"]
+venvPath = "."
+venv = ".venv"
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+skip_covered = true
+
+[tool.interrogate]
+fail-under = 80
+ignore-module = true
+
+# Ruff is the single tool for linting and formatting
+[tool.ruff]
+line-length = 120
+src = ["src"]
+extend-exclude = [
+    "conf.py",
+]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "COM812",   # Conflicts with the formatter
+    "ISC001",   # Conflicts with the formatter
+    "ANN101",   # "missing-type-self"
+    "PT001",    # Pytest rules that are a matter of style preference
+    "PT004",
+    "PT005",
+    "PT023",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+    "S101", # Use of `assert` detected
+    "D103", # Missing docstring in public function
+]
+"**/__init__.py" = [
+    "F401", # Imported but unused
+    "F403", # Wildcard imports
+]
+"docs/**" = [
+    "INP001",   # Requires __init__.py but docs folder is not a package.
+]
+
+[tool.ruff.lint.pyupgrade]
+# Preserve types, even if a file imports `from __future__ import annotations`
+keep-runtime-typing = true
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
