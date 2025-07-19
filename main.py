@@ -1,17 +1,33 @@
 """Entry point for boot_dev submissions."""
 
+import argparse
 import logging
-import sys
+from argparse import Namespace
 
-from ai_agent.main import main
+from ai_agent.agent import run_agent
+
+
+class AiArgs(Namespace):
+    """Typing information for arguments."""
+
+    prompt: str = ""
+    verbose: bool = False
+
+
+logging.basicConfig(
+    filename="app.log", filemode="w", level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+
+logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
-    logger = logging.getLogger(__name__)
+    parser = argparse.ArgumentParser(description="AI Agent CLI")
+    _ = parser.add_argument("prompt", type=str, help="The prompt for the AI agent.")
+    _ = parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output.")
 
-    EXPECTED_ARG_COUNT = 2
-
-    if len(sys.argv) < EXPECTED_ARG_COUNT:
-        logger.critical("no promt given")
-        sys.exit(1)
-    prompt = sys.argv[1]
-    main(prompt)
+    try:
+        args = parser.parse_args(namespace=AiArgs())
+        logger.info(f"Arguments received: {args}")
+        run_agent(args.prompt, verbose=args.verbose)
+    except SystemExit:
+        logger.critical("Failed to parse arguments. Check the command.")
