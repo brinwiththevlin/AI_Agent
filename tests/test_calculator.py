@@ -1,13 +1,16 @@
 # tests.py
 
 import unittest
+from typing import final, override
 
 from ai_agent.calculator.pkg.calculator import Calculator
 
 
+@final
 class TestCalculator(unittest.TestCase):
+    @override
     def setUp(self):
-        self.calculator = Calculator()
+        self.calculator = Calculator()  # pyright: ignore[reportUninitializedInstanceVariable]
 
     def test_addition(self):
         result = self.calculator.evaluate("3 + 5")
@@ -39,12 +42,12 @@ class TestCalculator(unittest.TestCase):
 
     def test_invalid_operator(self):
         with self.assertRaises(ValueError):
-            self.calculator.evaluate("$ 3 5")
+            _ = self.calculator.evaluate("$ 3 5")
 
     def test_not_enough_operands(self):
         with self.assertRaises(ValueError):
-            self.calculator.evaluate("+ 3")
+            _ = self.calculator.evaluate("+ 3")
 
 
 if __name__ == "__main__":
-    unittest.main()
+    _ = unittest.main()

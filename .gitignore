@@ -1,5 +1,6 @@
 # custom
 src/**/*test*.py
+src/**/calculator/main.py
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
