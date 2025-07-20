@@ -7,18 +7,19 @@ from argparse import Namespace
 from ai_agent.agent import run_agent
 
 
+logging.basicConfig(
+    filename="app.log", filemode="w", level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+
+logger = logging.getLogger(__name__)
+
+
 class AiArgs(Namespace):
     """Typing information for arguments."""
 
     prompt: str = ""
     verbose: bool = False
 
-
-logging.basicConfig(
-    filename="app.log", filemode="w", level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-
-logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="AI Agent CLI")
