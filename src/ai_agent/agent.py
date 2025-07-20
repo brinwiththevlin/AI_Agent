@@ -8,9 +8,6 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-logging.basicConfig(
-    filename="app.log", filemode="w", level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
 
 logger = logging.getLogger(__name__)
 

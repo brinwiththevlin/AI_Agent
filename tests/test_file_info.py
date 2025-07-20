@@ -1,74 +1,53 @@
-# tests.py
+# tests/test_file_info.py
 
-import os
 import unittest
 from pathlib import Path
-from typing import final, override
 
 from ai_agent.functions.get_files_info import get_files_info
 
+FILE_PATH = Path(__file__)
+if FILE_PATH.parent.name == "tests":
+    PROJECT_ROOT = Path(__file__).parent.parent
+else:
+    PROJECT_ROOT = Path(__file__).parent.parent.parent
 
-@final
+WORKING_DIR = PROJECT_ROOT / "src" / "ai_agent" / "calculator"
+
+
 class TestFiles(unittest.TestCase):
-    @override
-    def setUp(self) -> None:
-        """Set up the test environment.
+    """Test suite for the get_files_info function."""
 
-        If the tests are being run from the project's 'tests' directory,
-        this changes the current working directory to the package's source
-        directory to ensure file paths are resolved correctly during the test.
-        """
-        self.original_cwd = Path.cwd()  # pyright: ignore[reportUninitializedInstanceVariable]
-        # Check if the current directory is named 'tests'
-        if self.original_cwd.name == "tests":
-            # Construct the path to the target directory
-            # This goes up one level from 'tests' to the project root,
-            # then into 'src/ai_agent'
-            project_root = self.original_cwd.parent
-            target_dir = project_root / "src" / "ai_agent"
+    def test_list_calculator_directory(self):
+        """Test listing the contents of the 'calculator' directory."""
+        result = get_files_info(WORKING_DIR, ".")
 
-            # Change directory if the target exists
-            if target_dir.is_dir():
-                os.chdir(target_dir)
+        self.assertRegex(result, r"- __init__\.py: file_size=\d* bytes, is_dir=False")
+        self.assertRegex(result, r"- main\.py: file_size=\d* bytes, is_dir=False")
+        self.assertRegex(result, r"- calc\.py: file_size=\d* bytes, is_dir=False")
+        self.assertRegex(result, r"- pkg: file_size=\d* bytes, is_dir=True")
 
-    @override
-    def tearDown(self) -> None:
-        """Tear down the test environment.
+    def test_list_pkg_subdirectory(self):
+        """Test listing the contents of a subdirectory."""
+        result = get_files_info(WORKING_DIR, "pkg")
 
-        Restores the original working directory after the test has run
-        to prevent side effects on other tests.
-        """
-        os.chdir(self.original_cwd)
+        self.assertRegex(result, r"- __init__\.py: file_size=\d* bytes, is_dir=False")
+        self.assertRegex(result, r"- calculator\.py: file_size=\d* bytes, is_dir=False")
+        self.assertRegex(result, r"- render\.py: file_size=\d* bytes, is_dir=False")
 
-    def test_root(self):
-        result = get_files_info("calculator", ".")
-        expected = (
-            "- pkg: file_size=4096 bytes, is_dir=True\n"
-            "- calc.py: file_size=1193 bytes, is_dir=False\n"
-            "- main.py: file_size=1193 bytes, is_dir=False\n"
-            "- __pycache__: file_size=4096 bytes, is_dir=True\n"
-            "- __init__.py: file_size=0 bytes, is_dir=False\n"
-        )
-        self.assertEqual(result, expected)
+    def test_prohibited_absolute_path(self):
+        """Test that inspecting an absolute path outside the project raises an error."""
+        with self.assertRaises(ValueError):
+            _ = get_files_info(WORKING_DIR, "/etc")
 
-    def test_pkg(self):
-        result = get_files_info("calculator", "pkg")
-        # TODO: expected is wrong
-        expected = (
-            "- __init__.py: file_size=0 bytes, is_dir=False\n"
-            "- __pycache__: file_size=4096 bytes, is_dir=True\n"
-        )
-        self.assertEqual(result, expected)
+    def test_prohibited_parent_directory(self):
+        """Test that directory traversal ('../') is not allowed."""
+        with self.assertRaises(ValueError):
+            _ = get_files_info(WORKING_DIR, "../")
 
-    def test_bin(self):
-        result = get_files_info("calculator", "/bin")
-        expected = "Error: Cannot list '/bin' as it is outside the permitted working directory"
-        self.assertEqual(result, expected)
-
-    def test_parent(self):
-        result = get_files_info("calculator", "../")
-        expected = "Error: Cannot list '../' as it is outside the permitted working directory"
-        self.assertEqual(result, expected)
+    def test_non_existent_directory(self):
+        """Test that inspecting a non-existent directory raises an error."""
+        with self.assertRaises(FileNotFoundError):
+            _ = get_files_info(WORKING_DIR, "this_dir_does_not_exist")
 
 
 if __name__ == "__main__":
