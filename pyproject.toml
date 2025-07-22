@@ -1,19 +1,12 @@
 # ==============================================================================
-# Generic Python Project Template - pyproject.toml
-# ==============================================================================
-#
-# Instructions:
-# 1. Fill in the placeholders in the [project] section.
-# 2. Add your project's core dependencies to the `dependencies` list.
-# 3. Update the `include` path in [tool.pyright] to match your package name.
-#
+# pyproject.toml
 # ==============================================================================
 
 [build-system]
 requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
-# --- Project Metadata (Fill this out for each new project) ---
+# --- Project Metadata ---
 [project]
 name = "ai_agent"
 version = "0.1.0"
@@ -21,11 +14,8 @@ description = "A brief description of your project."
 authors = [{ name = "Bryan Cora", email = "bcora2018@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.12"
-license = { file = "LICENSE" } # Assumes you will add a LICENSE file (e.g., MIT)
-dependencies = [
-    # Add your project's core runtime dependencies here
-    # e.g., "requests", "numpy"
-]
+license = { file = "LICENSE" }
+dependencies = []
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
@@ -42,7 +32,6 @@ lint = ["ruff", "pyright"]
 test = ["pytest", "coverage"]
 doc = ["sphinx"]
 build = ["build[virtualenv]==1.0.3"]
-# The 'dev' group installs everything needed for development
 dev = [
     "tox",
     "pre-commit",
@@ -56,7 +45,6 @@ dev = [
 # --- Tool Configurations ---
 
 [tool.pyright]
-# Update this to match your package name inside the 'src' directory
 include = ["src/ai_agent"]
 exclude = [".venv"]
 venvPath = "."
@@ -74,37 +62,41 @@ skip_covered = true
 fail-under = 80
 ignore-module = true
 
-# Ruff is the single tool for linting and formatting
+# ==============================================================================
+# Ruff Configuration (Linter and Formatter)
+# ==============================================================================
 [tool.ruff]
-select = ["ALL"]
-pyupgrade = { keep-runtime-typing = true }
-pydocstyle = { convention = "google" }
-ignore = [
-    "COM812", # Conflicts with the formatter
-    "ISC001", # Conflicts with the formatter
-    "PT001",  # Pytest rules that are a matter of style preference
-    "G004",   # logging with f-strings is ok imo
-    "PT023",
-]
-per-file-ignores = { "tests/**" = [
-    "S101",
-    "D103",
-    "D102",
-    "D101",
-    "D100",
-    "PT009",
-    "PT027",
-    "ANN201",
-], "**/__init__.py" = [
-    "F401",
-    "F403",
-], "docs/**" = [
-    "INP001",
-] }
+# General settings apply to both the linter and formatter
 line-length = 120
 src = ["src"]
 extend-exclude = ["conf.py"]
 target-version = "py312"
+
+# --- Linter Specific Settings ---
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "COM812", # Conflicts with the formatter
+    "ISC001", # Conflicts with the formatter
+    "ANN101", # "missing-type-self"
+    "PT001",  # Pytest rules that are a matter of style preference
+    "PT004",
+    "PT005",
+    "G004",   # logging with f-strings is ok imo
+    "PT023",
+]
+# Plugin-specific settings are defined as inline tables here
+pyupgrade = { keep-runtime-typing = true }
+pydocstyle = { convention = "google" }
+
+# Per-file-ignores is a sub-table of the lint section
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "D103", "PT009"]
+"**/__init__.py" = ["F401", "F403"]
+"docs/**" = ["INP001"]
+
+# --- Formatter Specific Settings ---
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
+

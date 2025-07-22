@@ -1,6 +1,7 @@
 # custom
 src/**/*test*.py
 src/**/calculator/main.py
+src/**/calculator/lorum_ipsum.txt
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
