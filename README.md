@@ -5,7 +5,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A sophisticated AI agent designed to interact with your local file system, providing intelligent information retrieval and executing complex tasks through natural language commands.
+A CLI AI agent designed to interact with your local file system, providing intelligent information retrieval and executing complex tasks through natural language commands.
 
 ---
 
@@ -62,6 +62,7 @@ To get this project up and running on your local machine, follow these steps.
 
 ## 🚀 Usage
 
+<!-- TODO: add correct usage -->
 To start the agent, run the `main.py` script from the root directory:
 
 ```bash
@@ -91,5 +92,4 @@ Contributions are welcome! If you have suggestions for improvements, please open
 ---
 
 ## 📄 License
-
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

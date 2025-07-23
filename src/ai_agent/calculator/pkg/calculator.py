@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 class Calculator:
-    """Calculator Class."""
+    """Calculator Class. currently only supports basic arithmatic expressions with standard order of operations."""
 
     def __init__(self) -> None:
         """Initiallizer for the calculator."""
@@ -31,10 +31,10 @@ class Calculator:
         ex: "1 + 2 / 4". not "1+2/4".
 
         Args:
-            expression: expresion to evaluate
+            expression (str): expresion to evaluate
 
         Returns:
-            final value, None if expresion is malformated
+            float | None: final value, None if expresion is malformated
         """
         if not expression or expression.isspace():
             return None

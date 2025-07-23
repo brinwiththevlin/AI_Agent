@@ -11,14 +11,14 @@ from google.genai import types
 logger = logging.getLogger(__name__)
 
 
-def run_agent(user_prompt: str, verbose: bool) -> None:
+def run_agent(user_prompt: str, verbose: bool) -> None:  # noqa: FBT001
     """Main driver for AI agent project.
 
     Cli application to interact with an LLM in the terminal.
 
     Args:
-        user_prompt: Prompt to ask the AI.
-        verbose: Set to true if you want token stats in your response.
+        user_prompt (str): Prompt to ask the AI.
+        verbose (bool): Set to true if you want token stats in your response.
     """
     messages = [
         types.Content(role="user", parts=[types.Part(text=user_prompt)]),
@@ -28,7 +28,7 @@ def run_agent(user_prompt: str, verbose: bool) -> None:
 
     client = genai.Client(api_key=api_key)
 
-    response = client.models.generate_content(
+    response = client.models.generate_content(  # pyright: ignore[reportUnknownMemberType]
         model="gemini-2.0-flash-001",
         contents=messages,
     )
@@ -46,4 +46,3 @@ def run_agent(user_prompt: str, verbose: bool) -> None:
         print(f"User prompt: {user_prompt}")
         print(f"Prompt tokens: {prompt_tokens}")
         print(f"Response tokens: {response_tokens}")
-

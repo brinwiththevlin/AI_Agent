@@ -10,7 +10,7 @@ def render(expression: str, result: float | None) -> str:
         result: final result of expression
 
     Returns:
-        ASCII box with expresion and result inside
+        str: ASCII box with expresion and result inside
     """
     result_str = str(int(result)) if isinstance(result, float) and result.is_integer() else str(result)
 
