@@ -1,15 +1,19 @@
+"""Tools for interacting with the local file system.
+
+This module provides a safe, agent-callable function for running a python file.
+"""
+
 import logging
-from pathlib import Path
 from subprocess import run
 from typing import Any
 
-from ai_agent.exceptions import InvalidPathError, PathType
+from ai_agent.exceptions import DirectoryTraversalError, PathType
 from ai_agent.functions.utils import validate_path
 
 logger = logging.getLogger(__name__)
 
 
-def run_python_file(working_directory: str | Path, file_path: str | Path, args: list[Any] | None = None) -> str:  # pyright: ignore[reportExplicitAny]
+def run_python_file(working_directory: str, file_path: str, args: list[Any] | None = None) -> str:  # pyright: ignore[reportExplicitAny]
     """Tool to allow agent to execute python code stored in the working directory.
 
     Only python code stored in teh working directoyr is allowed to be run.
@@ -26,13 +30,13 @@ def run_python_file(working_directory: str | Path, file_path: str | Path, args: 
         args = []
     try:
         target_path = validate_path(file_path, working_directory, expected_type=PathType.FILE)
-    except FileNotFoundError:
-        logger.exception("Error in run_python_file:")
-        return f'Error: File "{file_path}" not found.'
-    except InvalidPathError:
+    except DirectoryTraversalError:
         logger.exception("Error in run_python_file:")
         return f'Error: Cannot execute "{file_path}" as it is outside the permitted working directory'
 
+    if not target_path.exists():
+        logger.exception("Error in run_python_file:")
+        return f'Error: File "{file_path}" not found.'
     if not target_path.name.endswith(".py"):
         return f'Error: "{file_path}" is not a Python file.'
 

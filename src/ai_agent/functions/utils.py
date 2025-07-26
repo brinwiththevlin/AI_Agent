@@ -8,7 +8,7 @@ from ai_agent.exceptions import DirectoryTraversalError, InvalidPathError, PathT
 logger = logging.getLogger(__name__)
 
 
-def validate_path(relative_path: str | Path, working_directory: str | Path, expected_type: PathType) -> Path:
+def validate_path(relative_path: str, working_directory: str, expected_type: PathType) -> Path:
     """Method for validating the path.
 
     Relative_path must be relative to the working directory and must be a desendant.
@@ -26,7 +26,7 @@ def validate_path(relative_path: str | Path, working_directory: str | Path, expe
         InvalidPathError: Raised if the path does not exist or the path is a dir and should be a file or vice versa.
     """
     base_path = Path(working_directory).resolve(strict=True)
-    target_path = (base_path / relative_path).resolve(strict=True)
+    target_path = (base_path / relative_path).resolve()
 
     if not target_path.is_relative_to(base_path):
         raise DirectoryTraversalError(str(target_path))

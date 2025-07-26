@@ -4,7 +4,6 @@ This module provides a safe, agent-callable function for querying files.
 """
 
 import logging
-from pathlib import Path
 
 from ai_agent.exceptions import AIAgentError, PathType
 from ai_agent.functions.utils import validate_path
@@ -12,7 +11,7 @@ from ai_agent.functions.utils import validate_path
 logger = logging.getLogger(__name__)
 
 
-def get_files_info(working_directory: str | Path, directory: str | Path = ".") -> str:
+def get_files_info(working_directory: str, directory: str = ".") -> str:
     """Get info on all files in a directory.
 
     This function is designed to be safe for use by an LLM agent. It will always
@@ -20,8 +19,8 @@ def get_files_info(working_directory: str | Path, directory: str | Path = ".") -
     returns a string starting with "Error: ".
 
     Args:
-        working_directory (str| Path): The highest-level directory where inspection is allowed.
-        directory (str| Path): The specific directory to inspect, relative to the working_directory.
+        working_directory: The highest-level directory where inspection is allowed.
+        directory: The specific directory to inspect, relative to the working_directory.
 
     Returns:
         str: A formatted string containing file information or an error message.

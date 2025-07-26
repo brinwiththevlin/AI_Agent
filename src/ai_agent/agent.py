@@ -8,7 +8,13 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
+from ai_agent.constants import MODEL_NAME, SYSTEM_PROMPT
+from ai_agent.schema import generate_schema
+
 logger = logging.getLogger(__name__)
+
+
+AVAILABLE_FUNCTIONS = types.Tool(function_declarations=generate_schema(exclude=["utils"]))
 
 
 def run_agent(user_prompt: str, verbose: bool) -> None:  # noqa: FBT001
@@ -29,20 +35,26 @@ def run_agent(user_prompt: str, verbose: bool) -> None:  # noqa: FBT001
     client = genai.Client(api_key=api_key)
 
     response = client.models.generate_content(  # pyright: ignore[reportUnknownMemberType]
-        model="gemini-2.0-flash-001",
+        model=MODEL_NAME,
         contents=messages,
+        config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT, tools=[AVAILABLE_FUNCTIONS]),
     )
 
-    print(response.text)
+    if response.function_calls:
+        for f in response.function_calls:
+            print(f"Calling function: {f.name}({f.args})")
 
-    if verbose:
-        if response.usage_metadata is None:
-            logger.fatal("usage_metadata is a required field for this project")
-            sys.exit(1)
+    else:
+        print(response.text)
 
-        prompt_tokens = response.usage_metadata.prompt_token_count
-        response_tokens = response.usage_metadata.candidates_token_count
+        if verbose:
+            if response.usage_metadata is None:
+                logger.fatal("usage_metadata is a required field for this project")
+                sys.exit(1)
 
-        print(f"User prompt: {user_prompt}")
-        print(f"Prompt tokens: {prompt_tokens}")
-        print(f"Response tokens: {response_tokens}")
+            prompt_tokens = response.usage_metadata.prompt_token_count
+            response_tokens = response.usage_metadata.candidates_token_count
+
+            print(f"User prompt: {user_prompt}")
+            print(f"Prompt tokens: {prompt_tokens}")
+            print(f"Response tokens: {response_tokens}")

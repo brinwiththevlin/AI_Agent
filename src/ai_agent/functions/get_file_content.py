@@ -4,16 +4,15 @@ This module provides a safe, agent-callable function for reading files.
 """
 
 import logging
-from pathlib import Path
 
-from ai_agent.config import FILE_CHAR_LIMIT
+from ai_agent.constants import FILE_CHAR_LIMIT
 from ai_agent.exceptions import AIAgentError, PathType
 from ai_agent.functions.utils import validate_path
 
 logger = logging.getLogger(__name__)
 
 
-def get_file_content(working_directory: str | Path, file_path: str | Path) -> str:
+def get_file_content(working_directory: str, file_path: str) -> str:
     """Reads the content of a file up to a character limit.
 
     This function is designed to be safe for use by an LLM agent. It will always

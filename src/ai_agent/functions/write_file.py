@@ -12,7 +12,7 @@ from ai_agent.functions.utils import validate_path
 logger = logging.getLogger(__name__)
 
 
-def write_file(working_directory: str | Path, file_path: str | Path, content: str) -> str:
+def write_file(working_directory: str, file_path: str, content: str) -> str:
     """Tool for agent to write to a file.
 
     Overriddes the content of a file within the working directory. Creates a new file if it does not exist.

@@ -92,10 +92,11 @@ pydocstyle = { convention = "google" }
 
 # Per-file-ignores is a sub-table of the lint section
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["S101", "D103", "PT009", "T201"]
+"tests/**" = ["S101", "D100", "D102", "D103", "PT009", "T201"]
 "**/__init__.py" = ["F401", "F403"]
 "docs/**" = ["INP001"]
 "src/**/agent.py" = ["T201"]
+"src/**/constants.py"=["E501"]
 
 # --- Formatter Specific Settings ---
 [tool.ruff.format]
