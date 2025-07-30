@@ -13,17 +13,25 @@ class TestWriteFile(unittest.TestCase):
         """Test that lorem.txt gets created."""
         result = write_file(WORKING_DIR, "lorem.txt", "wait, this isn't lorem ipsum")
         print(result)
-        self.assertRegex(result, r"Successfully wrote to '.*' \(\d* characters written\)")
+        self.assertRegex(
+            result, r"Successfully wrote to '.*' \(\d* characters written\)"
+        )
 
     def test_more_lorem(self) -> None:
         """Test that morelorem.txt gets created."""
-        result = write_file(WORKING_DIR, "pkg/morelorem.txt", "lorem ipsum dolor sit amet")
+        result = write_file(
+            WORKING_DIR, "pkg/morelorem.txt", "lorem ipsum dolor sit amet"
+        )
         print(result)
-        self.assertRegex(result, r"Successfully wrote to '.*' \(\d* characters written\)")
+        self.assertRegex(
+            result, r"Successfully wrote to '.*' \(\d* characters written\)"
+        )
 
     def test_prohibited_write(self) -> None:
         """Test that prohibited paths 'throw' an error."""
-        result = write_file(WORKING_DIR, "/tmp/temp.txt", "this should not be allowed")  # noqa: S108
+        result = write_file(
+            WORKING_DIR, "/tmp/temp.txt", "this should not be allowed"
+        )  # noqa: S108
         print(result)
         self.assertTrue(result.startswith("Error:"))
 

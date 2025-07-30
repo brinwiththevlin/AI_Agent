@@ -57,3 +57,12 @@ class InvalidPathError(AIAgentError):
         self.target_path: str = target_path
         message = f"The path '{self.target_path}' is not a valid {path_type.name.lower()}."
         super().__init__(message)
+
+
+class ApiKeyError(AIAgentError):
+    """Raised when there is a problem with the API key."""
+
+    def __init__(self) -> None:
+        """Initializes the ApiKeyError."""
+        message = "GEMINI_API_KEY not found in environment variables or .env file."
+        super().__init__(message)

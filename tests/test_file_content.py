@@ -13,7 +13,12 @@ class TestFileContent(unittest.TestCase):
         """Test for the lorum ipsum file. contains 20,000 bytes."""
         result = get_file_content(WORKING_DIR, "lorum_ipsum.txt")
         print(result)
-        self.assertRegex(result, r"\[ \.\.\. File .* truncated at " + str(FILE_CHAR_LIMIT) + r" characters \.\.\. \]")
+        self.assertRegex(
+            result,
+            r"\[ \.\.\. File .* truncated at "
+            + str(FILE_CHAR_LIMIT)
+            + r" characters \.\.\. \]",
+        )
 
     def test_calculator(self) -> None:
         """Test for the calc.py file."""
@@ -21,7 +26,10 @@ class TestFileContent(unittest.TestCase):
         print(result)
         self.assertFalse(result.startswith("Error:"), f"unexpected error: {result}")
         self.assertNotRegex(
-            result, r"\[ \.\.\. File .* truncated at " + str(FILE_CHAR_LIMIT) + r" characters \.\.\. \]"
+            result,
+            r"\[ \.\.\. File .* truncated at "
+            + str(FILE_CHAR_LIMIT)
+            + r" characters \.\.\. \]",
         )
 
     def test_calc_main(self) -> None:
@@ -30,7 +38,10 @@ class TestFileContent(unittest.TestCase):
         print(result)
         self.assertFalse(result.startswith("Error:"))
         self.assertNotRegex(
-            result, r"\[ \.\.\. File .* truncated at " + str(FILE_CHAR_LIMIT) + r" characters \.\.\. \]"
+            result,
+            r"\[ \.\.\. File .* truncated at "
+            + str(FILE_CHAR_LIMIT)
+            + r" characters \.\.\. \]",
         )
 
     def test_prohibited_file(self) -> None:

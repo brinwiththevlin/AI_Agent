@@ -10,7 +10,9 @@ from ai_agent.calculator.pkg.calculator import Calculator
 class TestCalculator(unittest.TestCase):
     @override
     def setUp(self):
-        self.calculator = Calculator()  # pyright: ignore[reportUninitializedInstanceVariable]
+        self.calculator = (
+            Calculator()
+        )  # pyright: ignore[reportUninitializedInstanceVariable]
 
     def test_addition(self):
         result = self.calculator.evaluate("3 + 5")

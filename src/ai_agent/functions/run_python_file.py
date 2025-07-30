@@ -4,9 +4,11 @@ This module provides a safe, agent-callable function for running a python file.
 """
 
 import logging
+import sys
 from subprocess import run
 from typing import Any
 
+from ai_agent.constants import MAX_FUNCTION_TIMEOUT, SUPPORTED_FILE_EXTENSIONS
 from ai_agent.exceptions import DirectoryTraversalError, PathType
 from ai_agent.functions.utils import validate_path
 
@@ -37,11 +39,18 @@ def run_python_file(working_directory: str, file_path: str, args: list[Any] | No
     if not target_path.exists():
         logger.exception("Error in run_python_file:")
         return f'Error: File "{file_path}" not found.'
-    if not target_path.name.endswith(".py"):
+    if not target_path.name.endswith(SUPPORTED_FILE_EXTENSIONS[0]):  # .py extension
         return f'Error: "{file_path}" is not a Python file.'
 
     try:
-        process = run(["python", target_path, *args], text=True, check=False, capture_output=True, timeout=30)  # noqa: S603, S607
+        # WARNING: security concern. This runs arbitrary code, which could be dangerous.
+        process = run(  # noqa: S603
+            [sys.executable, target_path, *args],
+            text=True,
+            check=False,
+            capture_output=True,
+            timeout=MAX_FUNCTION_TIMEOUT,
+        )
 
         if not process.stdout and not process.stderr:
             return "No output produced"

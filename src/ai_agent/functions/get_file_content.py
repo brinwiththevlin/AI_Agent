@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_file_content(working_directory: str, file_path: str) -> str:
-    """Reads the content of a file up to a character limit.
+    """Reads the content of a file up to a character limit of FILE_CHAR_LIMIT.
 
     This function is designed to be safe for use by an LLM agent. It will always
     return a string. On success, it returns the file content. On failure, it
