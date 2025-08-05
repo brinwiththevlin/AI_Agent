@@ -171,7 +171,7 @@ def _get_parameter_schema(
 if __name__ == "__main__":
     logging.basicConfig(
         filename=LOG_FILENAME,
-        filemode="w",
+        filemode="a",
         level=getattr(logging, LOG_LEVEL),
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )

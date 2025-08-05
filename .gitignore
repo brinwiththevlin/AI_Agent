@@ -1,3 +1,5 @@
+#VisualStudioCode
+.vscode/
 # custom
 src/**/*test*.py
 src/**/calculator/main.py

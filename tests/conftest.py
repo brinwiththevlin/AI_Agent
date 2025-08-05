@@ -27,7 +27,7 @@ def configure_logging():
         level=logging.DEBUG,  # Set level to DEBUG to capture all messages
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         filename=str(log_file),  # Use the absolute path
-        filemode="w",  # Overwrite the log file for each test run
+        filemode="a",  # Append to the log file for each test run
     )
 
     logger = logging.getLogger(__name__)

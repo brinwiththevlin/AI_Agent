@@ -66,3 +66,25 @@ class ApiKeyError(AIAgentError):
         """Initializes the ApiKeyError."""
         message = "GEMINI_API_KEY not found in environment variables or .env file."
         super().__init__(message)
+
+
+class FunctionError(AIAgentError):
+    """Raised when a function call fails or returns an invalid response.
+
+    This error is used to indicate that a function called by the AI agent did not
+    execute successfully or returned an unexpected format.
+
+    Attributes:
+        message (str): A description of the error.
+    """
+
+    def __init__(self, function_name: str | None) -> None:
+        """Initializes the FunctionError with a specific message.
+
+        Args:
+            function_name: The name of the function that caused the error.
+        """
+        message = (
+            f"Function {function_name if function_name else 'unknown_function'} returned no response or invalid format"
+        )
+        super().__init__(message)

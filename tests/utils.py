@@ -1,4 +1,5 @@
 from pathlib import Path
+from ai_agent.constants import WORKING_DIRECTORY
 
 FILE_PATH = Path(__file__)
 PROJECT_ROOT = (
@@ -7,4 +8,4 @@ PROJECT_ROOT = (
     else Path(__file__).parent.parent.parent
 )
 
-WORKING_DIR: str = str((PROJECT_ROOT / "src" / "ai_agent" / "calculator").resolve())
+WORKING_DIR: Path = (PROJECT_ROOT / WORKING_DIRECTORY).resolve()

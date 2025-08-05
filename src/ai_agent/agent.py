@@ -14,7 +14,7 @@ from ai_agent.constants import (
     WORKING_DIRECTORY,
 )
 from ai_agent.discovery import discover_tools, generate_schema
-from ai_agent.exceptions import ApiKeyError
+from ai_agent.exceptions import ApiKeyError, FunctionError
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,16 @@ def run_agent(user_prompt: str, verbose: bool) -> None:
 
     if response.function_calls:
         for f in response.function_calls:
-            print(f"Calling function: {f.name}({f.args})")
+            function_return = call_function(f, verbose=verbose)
+            if (
+                not function_return.parts
+                or not function_return.parts[0].function_response
+                or not function_return.parts[0].function_response.response
+            ):
+                logger.error(f"Function {f.name} returned no response or invalid format")
+                raise FunctionError(f.name)
+            if verbose:
+                print(f"-> {function_return.parts[0].function_response.response}")
     elif response.text:
         print(response.text)
 
@@ -92,7 +101,7 @@ def call_function(function_call_part: types.FunctionCall, verbose: bool = False)
     if verbose:
         print(f"Calling function: {function_call_part.name}({function_call_part.args})")
     else:
-        print(f" - Calling function: {function_call_part.name}")
+        print(f"Calling function: {function_call_part.name}")
 
     if function_call_part.name not in DISCOVERED_TOOLS:
         return types.Content(

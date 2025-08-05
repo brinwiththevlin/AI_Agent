@@ -6,7 +6,7 @@ from typing import Final
 # Static application constants (rarely change)
 DEFAULT_FILE_CHAR_LIMIT: Final[int] = 10_000
 DEFAULT_MODEL_NAME: Final[str] = "gemini-2.0-flash-001"
-DEFAULT_WORKING_DIRECTORY: Final[str] = "./calculator"
+DEFAULT_WORKING_DIRECTORY: Final[str] = "src/ai_agent/calculator"
 DEFAULT_LOG_LEVEL: Final[str] = "INFO"
 
 # Environment-configurable values with defaults

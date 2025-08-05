@@ -10,7 +10,7 @@ from ai_agent.exceptions import ApiKeyError
 
 logging.basicConfig(
     filename=LOG_FILENAME,
-    filemode="w",
+    filemode="a",
     level=getattr(logging, LOG_LEVEL),
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     try:
         args = parser.parse_args(namespace=AiArgs())
         logger.info(f"Arguments received: {args}")
-        print(run_agent(args.prompt, verbose=args.verbose))
+        run_agent(args.prompt, verbose=args.verbose)
     except ApiKeyError:
         logger.exception("make sure you have an API key")
     except SystemExit:
