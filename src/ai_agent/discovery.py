@@ -27,7 +27,7 @@ TYPE_MAPPING: dict[Any, types.Type] = {  # pyright: ignore[reportExplicitAny]
 # This new function does the slow work just ONCE.
 def discover_tools(
     exclude: list[str] | None = None,
-) -> dict[str, Callable[..., Any]]:  # pyright: ignore[reportExplicitAny]
+) -> dict[str, Callable[..., str]]:
     """Discovers tools found in the functions directory.
 
     Uses the builtin inspect module to discover all functions in the functions directory.
@@ -39,7 +39,7 @@ def discover_tools(
     Returns:
         dict of callable functions
     """
-    discovered_tools: dict[str, Callable[..., Any]] = {}  # pyright: ignore[reportExplicitAny]
+    discovered_tools: dict[str, Callable[..., str]] = {}
     package_path = ai_agent.functions.__path__
     package_prefix = ai_agent.functions.__name__ + "."
 
@@ -65,7 +65,7 @@ def discover_tools(
 
 
 def generate_schema(
-    discovered_tools: dict[str, Callable[..., Any]],
+    discovered_tools: dict[str, Callable[..., str]],
     banned_args: list[str] | None = None,
 ) -> list[types.FunctionDeclaration]:
     """Creates a genai.types.FunctionDeclaration schema for all tool functions found in the funcitons directory.
@@ -172,7 +172,7 @@ if __name__ == "__main__":
     logging.basicConfig(
         filename=LOG_FILENAME,
         filemode="a",
-        level=getattr(logging, LOG_LEVEL),
+        level=getattr(logging, LOG_LEVEL),  # pyright: ignore[reportAny]
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
     tools = discover_tools(exclude=EXCLUDED_FUNCTION_MODULES)

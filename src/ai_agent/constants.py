@@ -19,7 +19,8 @@ LOG_LEVEL: str = os.environ.get("LOG_LEVEL", DEFAULT_LOG_LEVEL)
 BASE_SYSTEM_PROMPT: Final[str] = """
 You are a helpful AI coding agent.
 
-When a user asks a question or makes a request, make a function call plan. You can perform the following operations:
+When a user asks a question or makes a request, ALWAYS make a function call plan then execute that plan.
+Do not ask the user for more information without first making a plan. You can perform the following operations:
 
 - {tool_list}
 
@@ -31,3 +32,4 @@ MAX_FUNCTION_TIMEOUT: Final[int] = 30
 SUPPORTED_FILE_EXTENSIONS: Final[list[str]] = [".py", ".txt", ".md"]
 EXCLUDED_FUNCTION_MODULES: Final[list[str]] = ["utils"]
 LOG_FILENAME: Final[str] = "app.log"
+MAX_ITERATIONS = 20

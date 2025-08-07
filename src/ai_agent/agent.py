@@ -2,6 +2,7 @@
 
 import logging
 import os
+import sys
 
 from dotenv import load_dotenv
 from google import genai
@@ -10,6 +11,7 @@ from google.genai import types
 from ai_agent.constants import (
     BASE_SYSTEM_PROMPT,
     EXCLUDED_FUNCTION_MODULES,
+    MAX_ITERATIONS,
     MODEL_NAME,
     WORKING_DIRECTORY,
 )
@@ -34,15 +36,10 @@ def run_agent(user_prompt: str, verbose: bool) -> None:
         user_prompt (str): Prompt to ask the AI.
         verbose (bool): Set to true if you want token stats in your response.
     """
-    # generate system prompt
+    system_prompt = generate_system_prompt()
 
-    if not AVAILABLE_FUNCTIONS.function_declarations:
-        tool_descriptions = ["no functions available at this time"]
-    else:
-        tool_descriptions: list[str] = [
-            func.description.split("\n")[0] for func in AVAILABLE_FUNCTIONS.function_declarations if func.description
-        ]
-    system_prompt = BASE_SYSTEM_PROMPT.format(tool_list="\n- ".join(tool_descriptions))
+    if verbose:
+        print(f"User prompt: {user_prompt}")
 
     _ = load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -54,38 +51,86 @@ def run_agent(user_prompt: str, verbose: bool) -> None:
         types.Content(role="user", parts=[types.Part(text=user_prompt)]),
     ]
 
+    iters = 0
+    while True:
+        iters += 1
+        if iters > MAX_ITERATIONS:
+            print(f"Maximum iterations ({MAX_ITERATIONS}) reached.")
+            sys.exit(1)
+
+        try:
+            final_response = generate_content(client, messages, system_prompt, verbose)
+            if final_response:
+                print("Final response:")
+                print(final_response)
+                break
+        except Exception as e:
+            print(f"Error in generate_content: {e}")
+
+
+def generate_content(
+    client: genai.Client, messages: list[types.Content], system_prompt: str, verbose: bool
+) -> str | None:
+    """Generate conent to display to the screen.
+
+    Args:
+        client: ai client used to generate content
+        messages: message history
+        system_prompt: Prompt to give the client
+        verbose: set to True for stats for nerds.
+
+    Returns:
+        final response
+
+    Raises:
+        FunctionError: raises  if function call result is empty or there was no function calls
+    """
     response = client.models.generate_content(  # pyright: ignore[reportUnknownMemberType]
         model=MODEL_NAME,
         contents=messages,
         config=types.GenerateContentConfig(system_instruction=system_prompt, tools=[AVAILABLE_FUNCTIONS]),
     )
+    if response.candidates:
+        messages.extend([c.content for c in response.candidates if c.content])
+    if verbose:
+        if response.usage_metadata is None:
+            msg = "usage_metadata is a required field for this project"
+            raise AttributeError(msg)
+        print("Prompt tokens:", response.usage_metadata.prompt_token_count)
+        print("Response tokens:", response.usage_metadata.candidates_token_count)
 
-    if response.function_calls:
-        for f in response.function_calls:
-            function_return = call_function(f, verbose=verbose)
-            if (
-                not function_return.parts
-                or not function_return.parts[0].function_response
-                or not function_return.parts[0].function_response.response
-            ):
-                logger.error(f"Function {f.name} returned no response or invalid format")
-                raise FunctionError(f.name)
-            if verbose:
-                print(f"-> {function_return.parts[0].function_response.response}")
-    elif response.text:
-        print(response.text)
+    if not response.function_calls:
+        return response.text
 
+    function_responses: list[types.Part] = []
+    for function_call_part in response.function_calls:
+        function_call_result = call_function(function_call_part, verbose)
+        if not function_call_result.parts or not function_call_result.parts[0].function_response:
+            raise FunctionError(function_call_part.name)
         if verbose:
-            if response.usage_metadata is None:
-                msg = "usage_metadata is a required field for this project"
-                raise AttributeError(msg)
+            print(f"-> {function_call_result.parts[0].function_response.response}")
+        function_responses.append(function_call_result.parts[0])
 
-            prompt_tokens = response.usage_metadata.prompt_token_count
-            response_tokens = response.usage_metadata.candidates_token_count
+    if not function_responses:
+        raise FunctionError()
 
-            print(f"User prompt: {user_prompt}")
-            print(f"Prompt tokens: {prompt_tokens}")
-            print(f"Response tokens: {response_tokens}")
+    messages.append(types.Content(role="tool", parts=function_responses))
+    return None
+
+
+def generate_system_prompt() -> str:
+    """Generates the system promped based on available functions.
+
+    Returns:
+        string for the full system prompt
+    """
+    if not AVAILABLE_FUNCTIONS.function_declarations:
+        tool_descriptions = ["no functions available at this time"]
+    else:
+        tool_descriptions: list[str] = [
+            func.description.split("\n")[0] for func in AVAILABLE_FUNCTIONS.function_declarations if func.description
+        ]
+    return BASE_SYSTEM_PROMPT.format(tool_list="\n- ".join(tool_descriptions))
 
 
 def call_function(function_call_part: types.FunctionCall, verbose: bool = False) -> types.Content:

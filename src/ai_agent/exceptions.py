@@ -84,7 +84,8 @@ class FunctionError(AIAgentError):
         Args:
             function_name: The name of the function that caused the error.
         """
-        message = (
-            f"Function {function_name if function_name else 'unknown_function'} returned no response or invalid format"
-        )
+        if function_name:
+            message = f"Function {function_name} returned no response or was of invalid format"
+        else:
+            message = "no function calls gave any responses"
         super().__init__(message)
