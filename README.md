@@ -66,10 +66,8 @@ To get this project up and running on your local machine, follow these steps.
 To start the agent, run the `main.py` script from the root directory:
 
 ```bash
-python main.py
+python main.py <prompt> <--verbose?>
 ```
-
-Once started, you can interact with the agent by typing your commands.
 
 **Examples:**
 
